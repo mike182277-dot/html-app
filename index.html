@@ -1,205 +1,1404 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive HTML App</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 28px;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .output {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .output.active {
-            display: block;
-        }
-        
-        .output h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .output p {
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .feature {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .feature-card {
-            padding: 15px;
-            background: #f9f9f9;
-            border-left: 4px solid #667eea;
-            border-radius: 4px;
-        }
-        
-        .feature-card h4 {
-            color: #667eea;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        .feature-card p {
-            font-size: 13px;
-            color: #999;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МедЗапись — Запись пациентов</title>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg-primary: #0a0f1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a2235;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-glow: rgba(16, 185, 129, 0.15);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border: #2d3a4f;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    body {
+      font-family: 'Onest', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+    
+    .app-container {
+      min-height: 100vh;
+      background: 
+        radial-gradient(ellipse at 20% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+    
+    .header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(12px);
+      background: rgba(10, 15, 26, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    
+    .logo-text {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: var(--bg-primary);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent);
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 90px);
+    }
+    
+    .sidebar {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .calendar-widget {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .calendar-month {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .calendar-nav {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .calendar-nav button {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .calendar-nav button:hover {
+      background: var(--bg-secondary);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    
+    .calendar-day-header {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+      position: relative;
+    }
+    
+    .calendar-day:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    
+    .calendar-day.today {
+      background: var(--accent-glow);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .calendar-day.selected {
+      background: var(--accent);
+      color: var(--bg-primary);
+      font-weight: 600;
+    }
+    
+    .calendar-day.has-appointments::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    
+    .calendar-day.other-month {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+    
+    .upcoming-section {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    
+    .upcoming-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .upcoming-item {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .upcoming-item:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+    
+    .upcoming-time {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    
+    .upcoming-name {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .upcoming-service {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .content-area {
+      padding: 32px;
+      overflow-y: auto;
+    }
+    
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.1);
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-icon.green { background: rgba(16, 185, 129, 0.15); }
+    .stat-icon.blue { background: rgba(59, 130, 246, 0.15); }
+    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); }
+    .stat-icon.purple { background: rgba(139, 92, 246, 0.15); }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    
+    .appointments-section {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    
+    .appointments-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .appointments-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .filter-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      font-family: inherit;
+    }
+    
+    .filter-tab:hover { color: var(--text-primary); }
+    
+    .filter-tab.active {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+    
+    .appointments-list {
+      padding: 12px;
+    }
+    
+    .appointment-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 180px 120px 100px;
+      align-items: center;
+      padding: 16px 20px;
+      border-radius: 12px;
+      transition: all 0.2s;
+      gap: 16px;
+    }
+    
+    .appointment-row:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .appointment-time {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .appointment-patient {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .patient-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .patient-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .patient-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .patient-phone {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .appointment-service {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .appointment-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .status-confirmed {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+    }
+    
+    .status-pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+    
+    .appointment-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .action-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .action-btn:hover {
+      background: var(--bg-card);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    .action-btn.delete:hover {
+      color: var(--error);
+      border-color: var(--error);
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal {
+      background: var(--bg-card);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid var(--border);
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: none;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-size: 18px;
+    }
+    
+    .modal-close:hover {
+      background: var(--error);
+      color: white;
+    }
+    
+    .modal-body {
+      padding: 28px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .modal-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .notification-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    
+    .toggle-switch {
+      width: 48px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 13px;
+      position: relative;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    
+    .toggle-switch.active {
+      background: var(--accent);
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: all 0.3s;
+    }
+    
+    .toggle-switch.active::after {
+      left: 25px;
+    }
+    
+    .toggle-label {
+      flex: 1;
+    }
+    
+    .toggle-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .toggle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    /* Settings */
+    .settings-section {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .settings-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .settings-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    
+    .settings-info h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .settings-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .connected-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+    }
+    
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      min-width: 300px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .toast.active {
+      display: flex;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(100%); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .toast-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(16, 185, 129, 0.15);
+    }
+    
+    .toast-content { flex: 1; }
+    
+    .toast-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .toast-message {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+    
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .empty-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .appointment-row { grid-template-columns: 80px 1fr 120px 100px; }
+      .appointment-service { display: none; }
+    }
+    
+    @media (max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .header { padding: 16px 20px; }
+      .content-area { padding: 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .stat-card { padding: 16px; }
+      .stat-value { font-size: 24px; }
+      .appointment-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .appointment-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to HTML App</h1>
-        
-        <div class="input-group">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" placeholder="Enter your name">
-        </div>
-        
-        <div class="input-group">
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" placeholder="Enter your email">
-        </div>
-        
-        <div class="input-group">
-            <label for="message">Message:</label>
-            <textarea id="message" rows="4" placeholder="Share your thoughts..."></textarea>
-        </div>
-        
-        <button onclick="handleSubmit()">Submit</button>
-        
-        <div id="output" class="output">
-            <h3>Submission Received</h3>
-            <p id="displayContent"></p>
-        </div>
-        
-        <div class="feature">
-            <div class="feature-card">
-                <h4>✨ Responsive</h4>
-                <p>Works on all devices</p>
+  <div class="app-container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">🩺</div>
+        <span class="logo-text">МедЗапись</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="openSettings()">⚙️ Настройки</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Новая запись</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <aside class="sidebar">
+        <div class="calendar-widget">
+          <div class="calendar-header">
+            <span class="calendar-month" id="calendarMonth"></span>
+            <div class="calendar-nav">
+              <button onclick="prevMonth()">←</button>
+              <button onclick="nextMonth()">→</button>
             </div>
-            <div class="feature-card">
-                <h4>🌟 Modern UI</h4>
-                <p>Beautiful gradient design</p>
-            </div>
-            <div class="feature-card">
-                <h4>⚡ Fast</h4>
-                <p>Instant interactions</p>
-            </div>
-            <div class="feature-card">
-                <h4>🔐 Secure</h4>
-                <p>Client-side processing</p>
-            </div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
         </div>
+
+        <div class="upcoming-section">
+          <h3 class="section-title">Сегодня</h3>
+          <div class="upcoming-list" id="upcomingList"></div>
+        </div>
+      </aside>
+
+      <div class="content-area">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Расписание приёмов</h1>
+            <p class="page-subtitle">Управляйте записями пациентов</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green">📅</div>
+            <div class="stat-value" id="statToday">0</div>
+            <div class="stat-label">Записей сегодня</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">✓</div>
+            <div class="stat-value" id="statConfirmed">0</div>
+            <div class="stat-label">Подтверждено</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⏳</div>
+            <div class="stat-value" id="statPending">0</div>
+            <div class="stat-label">Ожидают подтверждения</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">👥</div>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Всего записей</div>
+          </div>
+        </div>
+
+        <div class="appointments-section">
+          <div class="appointments-header">
+            <h2 class="appointments-title">Записи пациентов</h2>
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="setFilter('all', this)">Все</button>
+              <button class="filter-tab" onclick="setFilter('today', this)">Сегодня</button>
+              <button class="filter-tab" onclick="setFilter('pending', this)">Ожидают</button>
+            </div>
+          </div>
+          <div class="appointments-list" id="appointmentsList"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Новая запись -->
+  <div class="modal-overlay" id="appointmentModal">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Новая запись</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">ФИО пациента</label>
+          <input type="text" class="form-input" id="patientName" placeholder="Иванов Иван Иванович">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <input type="tel" class="form-input" id="patientPhone" placeholder="+7 (999) 123-45-67">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Дата</label>
+            <input type="date" class="form-input" id="appointmentDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Время</label>
+            <input type="time" class="form-input" id="appointmentTime">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Тип приёма</label>
+          <select class="form-input" id="appointmentService">
+            <option>Первичный приём</option>
+            <option>Повторный приём</option>
+            <option>Консультация</option>
+            <option>Диагностика</option>
+            <option>Процедура</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Уведомления</label>
+          <div class="notification-toggle" onclick="toggleWhatsApp()">
+            <div class="toggle-switch active" id="toggleWhatsApp"></div>
+            <div class="toggle-label">
+              <div class="toggle-title">WhatsApp</div>
+              <div class="toggle-desc">Напоминание за 24 часа и за 2 часа</div>
+            </div>
+          </div>
+          <div class="notification-toggle" onclick="toggleEmail()">
+            <div class="toggle-switch active" id="toggleEmail"></div>
+            <div class="toggle-label">
+              <div class="toggle-title">Email</div>
+              <div class="toggle-desc">Подтверждение записи и напоминание</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+        <button class="btn btn-primary" onclick="addAppointment()">Создать запись</button>
+      </div>
     </div>
-    
-    <script>
-        function handleSubmit() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
-            
-            if (name && email && message) {
-                const content = `Thank you, <strong>${name}</strong>! We received your message and will contact you at <strong>${email}</strong> shortly.`;
-                document.getElementById('displayContent').innerHTML = content;
-                document.getElementById('output').classList.add('active');
-                
-                // Clear inputs
-                document.getElementById('name').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('message').value = '';
-            } else {
-                alert('Please fill in all fields!');
-            }
-        }
+  </div>
+
+  <!-- Modal: Настройки -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Настройки</h2>
+        <button class="modal-close" onclick="closeSettings()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3 class="settings-title">📅 Интеграция с календарём</h3>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Google Calendar</h4>
+              <p>Синхронизация записей с вашим календарём</p>
+            </div>
+            <div id="calendarStatus">
+              <button class="btn btn-primary" onclick="connectCalendar()">Подключить</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 class="settings-title">🔔 Уведомления</h3>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>WhatsApp Business API</h4>
+              <p>Автоматические напоминания пациентам</p>
+            </div>
+            <button class="btn btn-secondary">Настроить</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Email уведомления</h4>
+              <p>SMTP сервер для отправки писем</p>
+            </div>
+            <button class="btn btn-secondary">Настроить</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Telegram бот</h4>
+              <p>Уведомления через Telegram</p>
+            </div>
+            <button class="btn btn-secondary">Настроить</button>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 class="settings-title">⏰ Расписание работы</h3>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Рабочие часы</h4>
+              <p>Пн-Пт: 09:00 - 18:00</p>
+            </div>
+            <button class="btn btn-secondary">Изменить</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <h4>Длительность приёма</h4>
+              <p>30 минут по умолчанию</p>
+            </div>
+            <button class="btn btn-secondary">Изменить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container">
+    <div class="toast" id="toast">
+      <div class="toast-icon">✓</div>
+      <div class="toast-content">
+        <div class="toast-title" id="toastTitle"></div>
+        <div class="toast-message" id="toastMessage"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Данные
+    let appointments = [
+      {
+        id: 1,
+        time: '09:00',
+        date: formatDate(new Date()),
+        patient: { name: 'Анна Петрова', phone: '+7 (999) 123-45-67', initials: 'АП' },
+        service: 'Первичный приём',
+        status: 'confirmed',
+        notifyWhatsApp: true,
+        notifyEmail: true
+      },
+      {
+        id: 2,
+        time: '10:30',
+        date: formatDate(new Date()),
+        patient: { name: 'Сергей Иванов', phone: '+7 (999) 234-56-78', initials: 'СИ' },
+        service: 'Повторный приём',
+        status: 'confirmed',
+        notifyWhatsApp: true,
+        notifyEmail: false
+      },
+      {
+        id: 3,
+        time: '12:00',
+        date: formatDate(new Date()),
+        patient: { name: 'Мария Козлова', phone: '+7 (999) 345-67-89', initials: 'МК' },
+        service: 'Консультация',
+        status: 'pending',
+        notifyWhatsApp: true,
+        notifyEmail: true
+      },
+      {
+        id: 4,
+        time: '14:30',
+        date: formatDate(new Date()),
+        patient: { name: 'Дмитрий Смирнов', phone: '+7 (999) 456-78-90', initials: 'ДС' },
+        service: 'Диагностика',
+        status: 'confirmed',
+        notifyWhatsApp: false,
+        notifyEmail: true
+      }
+    ];
+
+    let currentMonth = new Date();
+    let selectedDate = new Date();
+    let currentFilter = 'all';
+    let calendarConnected = false;
+    let notifyWhatsApp = true;
+    let notifyEmail = true;
+
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCalendar();
+      renderAppointments();
+      renderUpcoming();
+      updateStats();
+    });
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // Календарь
+    function renderCalendar() {
+      document.getElementById('calendarMonth').textContent = 
+        `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      dayNames.forEach(day => {
+        grid.innerHTML += `<div class="calendar-day-header">${day}</div>`;
+      });
+
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const startDay = firstDay.getDay() || 7;
+      for (let i = startDay - 1; i > 0; i--) {
+        const d = new Date(year, month, 1 - i);
+        grid.innerHTML += `<div class="calendar-day other-month">${d.getDate()}</div>`;
+      }
+
+      for (let i = 1; i <= lastDay.getDate(); i++) {
+        const d = new Date(year, month, i);
+        const isToday = d.toDateString() === new Date().toDateString();
+        const isSelected = d.toDateString() === selectedDate.toDateString();
+        const hasApt = appointments.some(a => a.date === formatDate(d));
         
-        // Allow Enter key to submit
-        document.getElementById('message').addEventListener('keypress', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                handleSubmit();
-            }
-        });
-    </script>
+        let classes = 'calendar-day';
+        if (isToday) classes += ' today';
+        if (isSelected) classes += ' selected';
+        if (hasApt) classes += ' has-appointments';
+        
+        grid.innerHTML += `<div class="${classes}" onclick="selectDate('${formatDate(d)}')">${i}</div>`;
+      }
+
+      const endDay = lastDay.getDay() || 7;
+      for (let i = 1; i <= 7 - endDay; i++) {
+        const d = new Date(year, month + 1, i);
+        grid.innerHTML += `<div class="calendar-day other-month">${d.getDate()}</div>`;
+      }
+    }
+
+    function prevMonth() {
+      currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1);
+      renderCalendar();
+    }
+
+    function selectDate(dateStr) {
+      selectedDate = new Date(dateStr);
+      renderCalendar();
+    }
+
+    // Записи
+    function renderAppointments() {
+      const list = document.getElementById('appointmentsList');
+      const today = formatDate(new Date());
+      
+      let filtered = appointments.filter(a => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'today') return a.date === today;
+        if (currentFilter === 'pending') return a.status === 'pending';
+        return true;
+      }).sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        return a.time.localeCompare(b.time);
+      });
+
+      if (filtered.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <h3 class="empty-title">Нет записей</h3>
+            <p class="empty-desc">Добавьте первую запись, нажав кнопку выше</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map(apt => `
+        <div class="appointment-row">
+          <div class="appointment-time">${apt.time}</div>
+          <div class="appointment-patient">
+            <div class="patient-avatar">${apt.patient.initials}</div>
+            <div class="patient-info">
+              <span class="patient-name">${apt.patient.name}</span>
+              <span class="patient-phone">${apt.patient.phone}</span>
+            </div>
+          </div>
+          <div class="appointment-service">${apt.service}</div>
+          <div class="appointment-status status-${apt.status}">
+            ${apt.status === 'confirmed' ? '✓ Подтверждено' : '⏳ Ожидает'}
+          </div>
+          <div class="appointment-actions">
+            ${apt.status === 'pending' ? `<button class="action-btn" onclick="confirmAppointment(${apt.id})" title="Подтвердить">✓</button>` : ''}
+            <button class="action-btn delete" onclick="deleteAppointment(${apt.id})" title="Удалить">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderUpcoming() {
+      const list = document.getElementById('upcomingList');
+      const today = formatDate(new Date());
+      
+      const upcoming = appointments
+        .filter(a => a.date === today)
+        .sort((a, b) => a.time.localeCompare(b.time))
+        .slice(0, 5);
+
+      if (upcoming.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted)">Нет записей на сегодня</div>';
+        return;
+      }
+
+      list.innerHTML = upcoming.map(apt => `
+        <div class="upcoming-item">
+          <div class="upcoming-time">${apt.time}</div>
+          <div class="upcoming-name">${apt.patient.name}</div>
+          <div class="upcoming-service">${apt.service}</div>
+        </div>
+      `).join('');
+    }
+
+    function updateStats() {
+      const today = formatDate(new Date());
+      const todayApts = appointments.filter(a => a.date === today);
+      
+      document.getElementById('statToday').textContent = todayApts.length;
+      document.getElementById('statConfirmed').textContent = todayApts.filter(a => a.status === 'confirmed').length;
+      document.getElementById('statPending').textContent = appointments.filter(a => a.status === 'pending').length;
+      document.getElementById('statTotal').textContent = appointments.length;
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderAppointments();
+    }
+
+    function addAppointment() {
+      const name = document.getElementById('patientName').value;
+      const phone = document.getElementById('patientPhone').value;
+      const date = document.getElementById('appointmentDate').value;
+      const time = document.getElementById('appointmentTime').value;
+      const service = document.getElementById('appointmentService').value;
+
+      if (!name || !phone || !date || !time) {
+        showToast('Ошибка', 'Заполните все обязательные поля');
+        return;
+      }
+
+      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+      appointments.push({
+        id: Date.now(),
+        time,
+        date,
+        patient: { name, phone, initials },
+        service,
+        status: 'pending',
+        notifyWhatsApp,
+        notifyEmail
+      });
+
+      closeModal();
+      renderAll();
+      showToast('Запись добавлена', `${name} записан на ${date} в ${time}`);
+
+      // Очистка формы
+      document.getElementById('patientName').value = '';
+      document.getElementById('patientPhone').value = '';
+      document.getElementById('appointmentDate').value = '';
+      document.getElementById('appointmentTime').value = '';
+    }
+
+    function deleteAppointment(id) {
+      const apt = appointments.find(a => a.id === id);
+      appointments = appointments.filter(a => a.id !== id);
+      renderAll();
+      showToast('Запись удалена', `${apt.patient.name} был уведомлён об отмене`);
+    }
+
+    function confirmAppointment(id) {
+      const apt = appointments.find(a => a.id === id);
+      apt.status = 'confirmed';
+      renderAll();
+      showToast('Запись подтверждена', `${apt.patient.name} получит уведомление`);
+    }
+
+    function renderAll() {
+      renderCalendar();
+      renderAppointments();
+      renderUpcoming();
+      updateStats();
+    }
+
+    // Модалки
+    function openModal() {
+      document.getElementById('appointmentModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('appointmentModal').classList.remove('active');
+    }
+
+    function openSettings() {
+      document.getElementById('settingsModal').classList.add('active');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.remove('active');
+    }
+
+    document.getElementById('appointmentModal').onclick = closeModal;
+    document.getElementById('settingsModal').onclick = closeSettings;
+
+    // Переключатели
+    function toggleWhatsApp() {
+      notifyWhatsApp = !notifyWhatsApp;
+      document.getElementById('toggleWhatsApp').classList.toggle('active', notifyWhatsApp);
+    }
+
+    function toggleEmail() {
+      notifyEmail = !notifyEmail;
+      document.getElementById('toggleEmail').classList.toggle('active', notifyEmail);
+    }
+
+    // Google Calendar
+    function connectCalendar() {
+      calendarConnected = true;
+      document.getElementById('calendarStatus').innerHTML = '<div class="connected-badge">✓ Подключено</div>';
+      showToast('Календарь подключён', 'Google Calendar синхронизирован');
+    }
+
+    // Toast
+    function showToast(title, message) {
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMessage').textContent = message;
+      document.getElementById('toast').classList.add('active');
+      setTimeout(() => {
+        document.getElementById('toast').classList.remove('active');
+      }, 4000);
+    }
+  </script>
 </body>
 </html>
